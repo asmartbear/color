@@ -124,3 +124,16 @@ test("from hsl(h,s,l(,a))", () => {
   t(0, 0, 128, 240, 100, 25)
   t(18, 18, 18, 0, 0, 7.1)
 });
+
+test("brightness", () => {
+  function t(c: string, b: number) {
+    expect(Color.fromCss(c).getBrightness()).toBeCloseTo(b, 2)
+  }
+
+  t('#fff', 1)
+  t('#000', 0)
+  t('#7f7f7f', 0.5)
+  t('#ff0000', 0.299)
+  t('#00ff00', 0.587)
+  t('#0000ff', 0.114)
+});

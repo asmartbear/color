@@ -126,4 +126,11 @@ export class Color {
     return '#' + h2(this.r) + h2(this.g) + h2(this.b) + h2(this.a)
   }
 
+  /**
+   * Gets the perceived brightness of the color, in `[0,1]`, as defined by http://www.w3.org/TR/AERT#color-contrast
+   */
+  getBrightness(): number {
+    return this.r * 0.299 + this.g * 0.587 + this.b * 0.114;
+  }
+
 }
