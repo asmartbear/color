@@ -1,6 +1,6 @@
 {
   "name": "@asmartbear/color",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Extremely small library for CSS color calculations",
   "keywords": [
     "color",
@@ -17,9 +17,9 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "minify": "uglifyjs --compress --mangle --output dist/index.min.js -- dist/index.js",
-    "postbuild": "rm -rf dist/test",
-    "prerelease": "npm run lint && npm test && npm run build",
-    "prepare": "npm run lint && npm test && npm run build",
+    "postbuild": "npm run minify",
+    "prerelease": "npm test && npm run build",
+    "prepare": "npm test && npm run build",
     "release": "standard-version",
     "postpublish": "git push origin main --follow-tags"
   },
