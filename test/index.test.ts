@@ -63,6 +63,8 @@ test("from rgb(r,g,b(,a))", () => {
 
     expect(Color.fromCss(`rgb(${r},${g},${b},${a})`).toCss()).toBe(target)
     expect(Color.fromCss(`rgb(${r},${g},${b})`).toCss()).toBe(targetNoAlpha)
+    expect(Color.fromCss(`rgb(${r * 100 / 255}%,${g * 100 / 255}%,${b * 100 / 255}%,${a * 100 / 255}%)`).toCss()).toBe(target)
+    expect(Color.fromCss(`rgb(${r * 100 / 255}%,${g * 100 / 255}%,${b * 100 / 255}%)`).toCss()).toBe(targetNoAlpha)
   }
 
   t(0, 0, 0, 0)
@@ -70,4 +72,28 @@ test("from rgb(r,g,b(,a))", () => {
   t(255, 255, 255, 255)
   t(255, 254, 253, 252)
   t(179, 180, 181, 182)
+});
+
+test("from hsv(h,s,v(,a))", () => {
+  function t(r: number, g: number, b: number, h: number, s: number, v: number) {
+    const target = new Color(r / 255, g / 255, b / 255, 1).toCss();
+
+    expect(Color.fromCss(`hsv(${h},${s},${v})`).toCss()).toBe(target)
+  }
+
+  t(0, 0, 0, 0, 0, 0)
+  t(255, 255, 255, 0, 0, 100)
+  t(255, 0, 0, 0, 100, 100)
+  t(0, 255, 0, 120, 100, 100)
+  t(0, 0, 255, 240, 100, 100)
+  t(255, 255, 0, 60, 100, 100)
+  t(0, 255, 255, 180, 100, 100)
+  t(255, 0, 255, 300, 100, 100)
+  t(191, 191, 191, 0, 0, 75)
+  t(128, 128, 128, 0, 0, 50)
+  t(128, 0, 0, 0, 100, 50)
+  t(128, 128, 0, 60, 100, 50)
+  t(0, 128, 0, 120, 100, 50)
+  t(0, 0, 128, 240, 100, 50)
+  t(18, 18, 18, 0, 0, 7.1)
 });
