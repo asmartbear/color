@@ -1,6 +1,6 @@
 {
   "name": "@asmartbear/color",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Extremely small library for CSS color calculations",
   "keywords": [
     "color",
