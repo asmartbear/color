@@ -54,7 +54,8 @@ export class Color {
    */
   static fromCss(s: string): Color {
     let m: RegExpMatchArray | null;
-    if (s === "transparent") return new Color(0, 0, 0, 0);
+    const c = NAMED_COLORS[s];
+    if (c) return c;
     if (m = s.match(RE_SIX_DIGIT)) {
       return new Color(fromHex(m[1]) / 255, fromHex(m[2]) / 255, fromHex(m[3]) / 255, m[4] ? fromHex(m[4]) / 255 : 1)
     }
@@ -71,8 +72,7 @@ export class Color {
         default: return new Color(0, 0, 0, 0);    // unknown format, but regex largely prevents this from happening!
       }
     }
-    // Don't know
-    return new Color(0, 0, 0, 0);
+    return NAMED_COLORS.transparent;
   }
 
   /**
@@ -169,4 +169,11 @@ export class Color {
     return (max(l1, l2) + 0.05) / (min(l1, l2) + 0.05);
   }
 
+}
+
+// Color name table -- just some basics, not the full set of HTML colors that no one uses
+const NAMED_COLORS: Record<string, Color> = {
+  "transparent": new Color(0, 0, 0, 0),
+  "white": new Color(1, 1, 1, 1),
+  "black": new Color(0, 0, 0, 1),
 }

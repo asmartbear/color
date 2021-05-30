@@ -18,8 +18,10 @@ test("invalid color", () => {
   t('x')
 });
 
-test("named color", () => {
+test("named colors", () => {
   expect(Color.fromCss("transparent").toCss()).toBe('#00000000')
+  expect(Color.fromCss("black").toCss()).toBe('#000000ff')
+  expect(Color.fromCss("white").toCss()).toBe('#ffffffff')
 });
 
 test("from #RGB(A)", () => {
@@ -126,8 +128,10 @@ test("from hsl(h,s,l(,a))", () => {
 });
 
 test("brightness", () => {
-  function t(c: string, b: number) {
-    expect(Color.fromCss(c).getBrightness()).toBeCloseTo(b, 2)
+  function t(css: string, b: number) {
+    const c = Color.fromCss(css);
+    expect(c.getBrightness()).toBeCloseTo(b, 2)
+    expect(c.isLight()).toBe(c.getBrightness() >= 0.5)
   }
 
   t('#fff', 1)
