@@ -59,7 +59,8 @@ export default class Color {
    * Reads a color from a CSS string, or returns `null` if the color is invalid.
    * Supports 'transparent' but no other written colors.
    */
-  static fromCss(s: string): Color {
+  static fromCss(s: string | null | undefined): Color {
+    if (typeof s !== 'string') return NAMED_COLORS.transparent.clone();
     let m: RegExpMatchArray | null;
     const c = NAMED_COLORS[s];
     if (c) return c.clone();

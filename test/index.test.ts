@@ -11,11 +11,15 @@ test("construction", () => {
 });
 
 test("invalid color", () => {
-  function t(p: string) { expect(Color.fromCss(p).toCss()).toBe('#00000000') }
+  function t(p: any) { expect(Color.fromCss(p).toCss()).toBe('#00000000') }
 
   t('')
   t('tacos')
   t('x')
+  t(123)
+  t(null)
+  t(undefined)
+  t({ r: 123, g: 123, b: 123 })
 });
 
 test("named colors", () => {
