@@ -137,3 +137,16 @@ test("brightness", () => {
   t('#00ff00', 0.587)
   t('#0000ff', 0.114)
 });
+
+test("luminance", () => {
+  function t(c: string, b: number) {
+    expect(Color.fromCss(c).getLuminance()).toBeCloseTo(b, 2)
+  }
+
+  t('#fff', 1)
+  t('#000', 0)
+  t('#7f7f7f', 0.2122)
+  t('#ff0000', 0.2126)
+  t('#00ff00', 0.7152)
+  t('#0000ff', 0.0722)
+});

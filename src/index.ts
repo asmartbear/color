@@ -6,6 +6,7 @@ const RE_LONGFORM = /\b(rgb|hs[vl])a?\s*\(\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*,
 
 // Global functions for speed
 const round = Math.round
+const pow = Math.pow
 
 // Parse string hex digits into a number
 function fromHex(s: string): number {
@@ -127,10 +128,25 @@ export class Color {
   }
 
   /**
-   * Gets the perceived brightness of the color, in `[0,1]`, as defined by http://www.w3.org/TR/AERT#color-contrast
+   * Gets the perceived brightness of the color, in `[0,1]`, as defined by
+   * http://www.w3.org/TR/AERT#color-contrast
    */
   getBrightness(): number {
     return this.r * 0.299 + this.g * 0.587 + this.b * 0.114;
+  }
+
+  /**
+   * Gets the luminance of the color, in `[0,1]`, as defined by
+   * http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+   */
+  getLuminance(): number {
+    const RsRGB = this.r, GsRGB = this.g, BsRGB = this.b;
+    var R, G, B;
+
+    if (RsRGB <= 0.03928) { R = RsRGB / 12.92; } else { R = pow(((RsRGB + 0.055) / 1.055), 2.4); }
+    if (GsRGB <= 0.03928) { G = GsRGB / 12.92; } else { G = pow(((GsRGB + 0.055) / 1.055), 2.4); }
+    if (BsRGB <= 0.03928) { B = BsRGB / 12.92; } else { B = pow(((BsRGB + 0.055) / 1.055), 2.4); }
+    return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
   }
 
 }
