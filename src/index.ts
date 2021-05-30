@@ -1,8 +1,8 @@
 
 // Global regular expressions
-const RE_THREE_DIGIT = /#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\b/;
-const RE_SIX_DIGIT = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\b/;
-const RE_LONGFORM = /\b(rgb|hsv)\s*\(\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*(?:,\s*([\.\d]+\%?))?\s*\)/;
+const RE_THREE_DIGIT = /#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\b/i;
+const RE_SIX_DIGIT = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\b/i;
+const RE_LONGFORM = /\b(rgb|hs[vl])a?\s*\(\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*(?:,\s*([\.\d]+\%?))?\s*\)/i;
 
 // Global functions for speed
 const round = Math.round
@@ -60,10 +60,12 @@ export class Color {
     }
     if (m = s.match(RE_LONGFORM)) {
       const a = m[5] ? fromNumber(m[5], 255) : 1;
-      switch (m[1]) {
+      switch (m[1].toLowerCase()) {
         case 'rgb': return new Color(fromNumber(m[2], 255), fromNumber(m[3], 255), fromNumber(m[4], 255), a);
         case 'hsv': return Color.fromHSV(fromNumber(m[2], 360), fromNumber(m[3], 100), fromNumber(m[4], 100), a);
-        default: return new Color(0, 0, 0, 0);    // unknown format
+        case 'hsl': return Color.fromHSL(fromNumber(m[2], 360), fromNumber(m[3], 100), fromNumber(m[4], 100), a);
+        /* istanbul ignore next */
+        default: return new Color(0, 0, 0, 0);    // unknown format, but regex largely prevents this from happening!
       }
     }
     // Don't know
@@ -84,6 +86,35 @@ export class Color {
       r = [v, q, p, p, t, v][mod],
       g = [t, v, v, q, p, p][mod],
       b = [p, p, t, v, v, q][mod];
+
+    return new Color(r, g, b, a);
+  }
+
+  /**
+   * Converting from HSL color space, all numbers in `[0,1]`.
+   */
+  static fromHSL(h: number, s: number, l: number, a: number): Color {
+    var r, g, b;
+
+    function hue2rgb(p: number, q: number, t: number) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    }
+    else {
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1 / 3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1 / 3);
+    }
 
     return new Color(r, g, b, a);
   }
