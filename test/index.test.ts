@@ -196,3 +196,23 @@ test("mix", () => {
   t('#c0804020', '#4020ff40', 0.5, '#8050a030')
   t('#c0804020', '#4020ff40', 0.75, '#6038cf38')
 });
+
+test("brighten", () => {
+  function t(css: string, p: number, cssResult: string) {
+    expect(Color.fromCss(css).brighten(p).toCss()).toBe(cssResult)
+  }
+
+  t('#c0804020', 0, '#c0804020')
+  t('#c0804020', 1, '#ffffff20')
+  t('#c0804020', 0.5, '#e0c0a020')
+});
+
+test("darken", () => {
+  function t(css: string, p: number, cssResult: string) {
+    expect(Color.fromCss(css).darken(p).toCss()).toBe(cssResult)
+  }
+
+  t('#c0804020', 0, '#c0804020')
+  t('#c0804020', 1, '#00000020')
+  t('#c0804020', 0.5, '#60402020')
+});

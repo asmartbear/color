@@ -55,7 +55,7 @@ export default class Color {
   static fromCss(s: string): Color {
     let m: RegExpMatchArray | null;
     const c = NAMED_COLORS[s];
-    if (c) return c;
+    if (c) return c.clone();
     if (m = s.match(RE_SIX_DIGIT)) {
       return new Color(fromHex(m[1]) / 255, fromHex(m[2]) / 255, fromHex(m[3]) / 255, m[4] ? fromHex(m[4]) / 255 : 1)
     }
@@ -72,7 +72,7 @@ export default class Color {
         default: return new Color(0, 0, 0, 0);    // unknown format, but regex largely prevents this from happening!
       }
     }
-    return NAMED_COLORS.transparent;
+    return NAMED_COLORS.transparent.clone();
   }
 
   /**
@@ -123,6 +123,13 @@ export default class Color {
   }
 
   /**
+   * Returns a copy of this color object.  Useful because they are mutable.
+   */
+  clone(): Color {
+    return new Color(this.r, this.g, this.b, this.a);
+  }
+
+  /**
    * Returns a CSS color value representation, e.g. `#f03452ff`.
    */
   toCss(): string {
@@ -170,7 +177,7 @@ export default class Color {
   }
 
   /**
-   * Mixes another color into this color, in-place.  The resulting color is `p` the new color,
+   * Mixes another color into this color and return in-place.  The resulting color is `p` the new color,
    * and `1-p` the existing color, with `p` in `[0,1]`.
    */
   mix(c: Color, p: number): this {
@@ -184,12 +191,20 @@ export default class Color {
   }
 
   /**
-   * Brighten in-place, by an amount in `[0,1]`, where `0` does not change the color,
-   * and `1` makes the color completely white.
+   * Brighten and return in-place, by an amount in `[0,1]`, where `0` does not change the color,
+   * and `1` makes the color completely white.  Does not alter the opacity.
    */
-  // brighten(x: number): this {
-  //   return this;
-  // }
+  brighten(x: number): this {
+    return this.mix(new Color(1, 1, 1, this.a), x);
+  }
+
+  /**
+   * Darken and return in-place, by an amount in `[0,1]`, where `0` does not change the color,
+   * and `1` makes the color completely black.  Does not alter the opacity.
+   */
+  darken(x: number): this {
+    return this.mix(new Color(0, 0, 0, this.a), x);
+  }
 
 }
 
