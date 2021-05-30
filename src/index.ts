@@ -9,6 +9,13 @@ const round = Math.round
 const pow = Math.pow
 const min = Math.min
 const max = Math.max
+const sqrt = Math.sqrt
+
+// Returns the squared difference between two numbers
+function sqdiff(a: number, b: number): number {
+  const d = a - b;
+  return d * d;
+}
 
 // Parse string hex digits into a number
 function fromHex(s: string): number {
@@ -142,6 +149,14 @@ export default class Color {
    */
   getBrightness(): number {
     return this.r * 0.299 + this.g * 0.587 + this.b * 0.114;
+  }
+
+  /**
+   * Gets the distance between this color and another as `[0,1]` where `0` is identical and `1` is the distance from white to black,
+   * weighted by human's perception of color differences.
+   */
+  getPerceptualDistance(c: Color): number {
+    return sqrt(sqdiff(this.r, c.r) * 0.299 + sqdiff(this.g, c.g) * 0.587 + sqdiff(this.b, c.b) * 0.114);
   }
 
   /**

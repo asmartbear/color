@@ -216,3 +216,23 @@ test("darken", () => {
   t('#c0804020', 1, '#00000020')
   t('#c0804020', 0.5, '#60402020')
 });
+
+test("distance", () => {
+  function t(css1: string, css2: string, x: number) {
+    const c1 = Color.fromCss(css1);
+    const c2 = Color.fromCss(css2);
+    expect(c1.getPerceptualDistance(c2)).toBeCloseTo(x, 2)
+    expect(c2.getPerceptualDistance(c1)).toBeCloseTo(x, 2)
+  }
+
+  t('#000', '#000', 0)
+  t('#fff', '#fff', 0)
+  t('#000', '#fff', 1)
+  t('#808080', '#fff', 0.5)
+  t('#808080', '#000', 0.5)
+  t('#ff0000', '#000', 0.55)
+  t('#00ff00', '#000', 0.77)
+  t('#0000ff', '#000', 0.34)
+  t('#ff0000', '#0000ff', 0.64)
+  t('#ff0000', '#00ff00', 0.94)
+});
