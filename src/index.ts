@@ -38,13 +38,13 @@ function h2(x: number): string {
   return 'ff'
 }
 
-export class Color {
+export default class Color {
 
   /**
    * Create a new, mutable color object, given color channels in the range `[0,1]`.
    * Typically it's easier to use a static method to create a color.
    */
-  constructor(private r: number, private g: number, private b: number, private a: number) {
+  constructor(public r: number, public g: number, public b: number, public a: number) {
     // nothing else to do
   }
 
@@ -168,6 +168,28 @@ export class Color {
     const l2 = c.getLuminance();
     return (max(l1, l2) + 0.05) / (min(l1, l2) + 0.05);
   }
+
+  /**
+   * Mixes another color into this color, in-place.  The resulting color is `p` the new color,
+   * and `1-p` the existing color, with `p` in `[0,1]`.
+   */
+  mix(c: Color, p: number): this {
+    if (p <= 0) return this;   // not mixing any of p, actually
+    if (p >= 1) p = 1;    // totally the other color
+    this.r += (c.r - this.r) * p;
+    this.g += (c.g - this.g) * p;
+    this.b += (c.b - this.b) * p;
+    this.a += (c.a - this.a) * p;
+    return this;
+  }
+
+  /**
+   * Brighten in-place, by an amount in `[0,1]`, where `0` does not change the color,
+   * and `1` makes the color completely white.
+   */
+  // brighten(x: number): this {
+  //   return this;
+  // }
 
 }
 

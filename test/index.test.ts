@@ -1,5 +1,5 @@
 import 'jest';      // Ref: https://jestjs.io/docs/en/expect#reference
-import { Color } from "../src";
+import Color from "../src";
 
 
 test("construction", () => {
@@ -170,4 +170,29 @@ test("contrast ratio", () => {
   t('#121212', '#ffffff', 18.73);
   t('#ff0000', '#0000ff', 2.15);
   t('#ff8080', '#0000ff', 3.54);
+});
+
+test("mix", () => {
+  function t(css1: string, css2: string, p: number, cssResult: string) {
+    const c1 = Color.fromCss(css1);
+    const c2 = Color.fromCss(css2);
+    expect(c1.mix(c2, p).toCss()).toBe(cssResult)
+  }
+
+  for (const css of ['#000000ff', '#ffffff00', '#c3512f45']) {
+    t(css, css, 1.2, css);
+    t(css, css, 1, css);
+    t(css, css, 0.5, css);
+    t(css, css, 0, css);
+    t(css, css, -0.2, css);
+  }
+  t('#fff', '#000', 0, '#ffffffff')
+  t('#fff', '#000', 1, '#000000ff')
+  t('#fff', '#000', 0.5, '#808080ff')
+  t('#fff', '#000', 0.75, '#404040ff')
+  t('#fff', '#000', 0.25, '#bfbfbfff')
+  t('#c0804020', '#4020ff40', 1, '#4020ff40')
+  t('#c0804020', '#4020ff40', 0, '#c0804020')
+  t('#c0804020', '#4020ff40', 0.5, '#8050a030')
+  t('#c0804020', '#4020ff40', 0.75, '#6038cf38')
 });
