@@ -7,19 +7,21 @@ const RE_LONGFORM = /\b(rgb|hs[vl])a?\s*\(\s*([\.\d]+\%?)\s*,\s*([\.\d]+\%?)\s*,
 // Global functions for speed
 const round = Math.round
 const pow = Math.pow
+const min = Math.min
+const max = Math.max
 
 // Parse string hex digits into a number
 function fromHex(s: string): number {
   return parseInt(s, 16);
 }
 
-// Parse a number, converting from `[0,max]` to `[0,1]`, or as a percentage if that is the trailing character
-function fromNumber(s: string, max: number): number {
+// Parse a number, converting from `[0,maximum]` to `[0,1]`, or as a percentage if that is the trailing character
+function fromNumber(s: string, maximum: number): number {
 
   // Compute an initial [0,1] value
   let x;
   if (s.endsWith('%')) x = parseFloat(s) / 100;
-  else x = parseFloat(s) / max;
+  else x = parseFloat(s) / maximum;
 
   // Clamp and slight round-off at the extremities, which are important values for color algorithms
   return x < 0.00001 ? 0 : x > 0.99999 ? 1 : x;
@@ -147,6 +149,24 @@ export class Color {
     if (GsRGB <= 0.03928) { G = GsRGB / 12.92; } else { G = pow(((GsRGB + 0.055) / 1.055), 2.4); }
     if (BsRGB <= 0.03928) { B = BsRGB / 12.92; } else { B = pow(((BsRGB + 0.055) / 1.055), 2.4); }
     return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  }
+
+  /**
+   * True if this color's brightness is above `0.5`.  Generally "light" background colors should receive
+   * dark foreground (e.g. text) colors, and vice versa.
+   */
+  isLight(): boolean {
+    return this.getBrightness() >= 0.5;
+  }
+
+  /**
+   * Computes the Contrast Ratio (i.e. readability) between this color and another, as defined by
+   * http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+   */
+  getContrastRatio(c: Color): number {
+    const l1 = this.getLuminance();
+    const l2 = c.getLuminance();
+    return (max(l1, l2) + 0.05) / (min(l1, l2) + 0.05);
   }
 
 }

@@ -150,3 +150,20 @@ test("luminance", () => {
   t('#00ff00', 0.7152)
   t('#0000ff', 0.0722)
 });
+
+test("contrast ratio", () => {
+  function t(css1: string, css2: string, x: number) {
+    const c1 = Color.fromCss(css1);
+    const c2 = Color.fromCss(css2);
+    expect(c1.getContrastRatio(c2)).toBeCloseTo(x, 2)
+    expect(c2.getContrastRatio(c1)).toBeCloseTo(x, 2)
+  }
+
+  t('#fff', '#fff', 1);
+  t('#000', '#000', 1);
+  t('#fff', '#000', 21);
+  t('#121212', '#000000', 1.12);
+  t('#121212', '#ffffff', 18.73);
+  t('#ff0000', '#0000ff', 2.15);
+  t('#ff8080', '#0000ff', 3.54);
+});
