@@ -221,6 +221,43 @@ test("darken", () => {
   t('#c0804020', 0.5, '#60402020')
 });
 
+test("hueShift", () => {
+  function t(css: string, p: number, cssResult: string) {
+    expect(Color.fromCss(css).hueShift(p).toCss()).toBe(cssResult)
+  }
+
+  t('#ff000000', 0, '#ff000000')
+  t('#ff000000', 1 / 3, '#00ff0000')
+  t('#ff000000', -2 / 3, '#00ff0000')
+  t('#ff000000', 2 / 3, '#0000ff00')
+  t('#ff000000', -1 / 3, '#0000ff00')
+  t('#ff000000', 3 / 3, '#ff000000')
+  t('#00ff0000', 0.1, '#00ff9900')
+
+  // sixths
+  const colors = ['#ff000000', '#ffff0000', '#00ff0000', '#00ffff00', '#0000ff00', '#ff00ff00'];
+  const unitShift = 1 / colors.length;
+  for (let k = 0; k < colors.length; ++k) {
+    for (let j = 0; j < colors.length; ++j) {
+      t(colors[k], unitShift * (j - k), colors[j])
+      t(colors[k], unitShift * (j - k) + 1, colors[j])
+      t(colors[k], unitShift * (j - k) + 2, colors[j])
+      t(colors[k], unitShift * (j - k) - 1, colors[j])
+      t(colors[k], unitShift * (j - k) - 2, colors[j])
+    }
+  }
+
+  // achromatic doesn't change
+  for (const c of ['#000000ff', '#ffffffff', '#121212ff']) {
+    t(c, 0, c)
+    t(c, 0.01, c)
+    t(c, 0.1, c)
+    t(c, 0.5, c)
+    t(c, 1, c)
+    t(c, -1 / 3, c)
+  }
+});
+
 test("distance", () => {
   function t(css1: string, css2: string, x: number) {
     const c1 = Color.fromCss(css1);

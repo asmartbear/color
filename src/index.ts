@@ -145,6 +145,37 @@ export default class Color {
   }
 
   /**
+   * Converts to HSL color space, all numbers in `[0,1]`.
+   */
+  toHSL(): { h: number, s: number, l: number, a: number } {
+
+    const r = this.r
+    const g = this.g
+    const b = this.b
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    var h, s;
+
+    if (max == min) {
+      h = s = 0; // achromatic
+    }
+    else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+            /*case b:*/default: h = (r - g) / d + 4; break;
+      }
+
+      h /= 6;
+    }
+
+    return { h: h, s: s, l: l, a: this.a };
+  }
+
+  /**
    * Gets the perceived brightness of the color, in `[0,1]`, as defined by
    * http://www.w3.org/TR/AERT#color-contrast
    */
@@ -220,6 +251,19 @@ export default class Color {
    */
   darken(x: number): this {
     return this.mix(new Color(0, 0, 0, this.a), x);
+  }
+
+  /**
+   * Shifts the color's hue counter-clockwise (i.e. red -> green -> blue -> red) by the given amount, where `1` is a full circle.
+   */
+  hueShift(x: number): this {
+    const hsl = this.toHSL();
+    hsl.h = hsl.h + x % 1;
+    const c2 = Color.fromHSL(hsl.h, hsl.s, hsl.l, hsl.a);
+    this.r = c2.r;
+    this.g = c2.g;
+    this.b = c2.b;
+    return this;
   }
 
 }
